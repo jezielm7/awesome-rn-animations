@@ -3,11 +3,18 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  Image,
-  Button,
-  StyleSheet,
   Dimensions,
+  StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
+
+import Reanimated, {
+  SlideInUp,
+  SlideOutDown,
+  SlideInRight,
+  SlideOutLeft,
+  FadeInUp,
+} from 'react-native-reanimated';
 
 import { languageData } from './data';
 
@@ -27,22 +34,41 @@ const LanguageList = () => {
   function renderItem(index: number) {
     const item = languageData[index];
 
+    const duration = 700;
+
     return (
       <View style={styles.item}>
-        <View style={styles.content}>
-          <Image source={item.image} style={[styles.image]} />
-          <Text style={styles.text}>{item.name}</Text>
-        </View>
+        <Reanimated.View
+          key={`card-${index}`}
+          entering={SlideInRight.duration(duration)}
+          exiting={SlideOutLeft.duration(duration)}
+          style={styles.content}>
+          <Reanimated.Image
+            key={`image-${index}`}
+            entering={SlideInUp.duration(duration / 2).springify()}
+            exiting={SlideOutDown.duration(duration)}
+            source={item.image}
+            style={[styles.image]}
+          />
+          <Reanimated.Text
+            key={`text-${index}`}
+            entering={FadeInUp.delay(400).duration(850)}
+            style={styles.text}>
+            {item.name}
+          </Reanimated.Text>
+        </Reanimated.View>
       </View>
     );
   }
 
   return (
-    <View>
+    <View style={styles.buttonContainer}>
       {renderItem(currentIndex)}
 
       <View style={styles.button}>
-        <Button title="Próximo Item" onPress={nextItem} />
+        <TouchableOpacity onPress={nextItem}>
+          <Text style={styles.textButton}>Próximo Item</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
